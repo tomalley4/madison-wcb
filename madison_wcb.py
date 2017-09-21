@@ -17,26 +17,27 @@ WCB_HEIGHT = 450
 
 def make_cnc_request(endpoint):
     if state['connected_to_bot']:
-        requests.get("http://localhost:4242/" + endpoint)
+        requests.get('http://localhost:4242/' + endpoint)
+
 
 ### Public API
 
 def initialize():
     try:
-        requests.get("http://localhost:4242/poll")
+        requests.get('http://localhost:4242/poll')
         state['connected_to_bot'] = True
     except requests.exceptions.ConnectionError:
         state['connected_to_bot'] = False
 
+    # set up turtle
     state['window'] = turtle.Screen()
     state['window'].setup(width=WCB_WIDTH, height=WCB_HEIGHT)
     state['turtle'] = turtle.Turtle()
     state['turtle'].width(5)
 
+    # set up watercolorbot brush
     brush_up()
     park()
-    # TODO how to deal with scratch positions vs turtle positions? make a utility conversion function? or do they have the same origin / coordinate system?
-    # i don't think they have the same coordinate system, the angles in scratch are shifted by -90 right?
 
 def cleanup():
     brush_up()
@@ -59,6 +60,7 @@ def get_color(index):
 def brush_down():
     make_cnc_request("pen.down")
     state['turtle'].pendown()
+
     # Wiggle the turtle one step so that it marks a dot on the turtle canvas.
     state['turtle'].forward(1)
     state['turtle'].backward(1)
@@ -73,7 +75,6 @@ def move_to(x, y):
 
 def point_in_direction(angle):
     make_cnc_request("move.absturn./" + str(angle))
-    # XXXX will likely need to shift this to match scratch angles
     state['turtle'].setheading(angle + 90)
 
 def move_forward(num_steps):
@@ -91,7 +92,8 @@ def turn_right(relative_angle):
 def get_position():
     return state['turtle'].position()
 
-# Test program
+
+### Test program
 
 
 def flower_scene():
