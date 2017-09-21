@@ -51,9 +51,12 @@ def wash_brush():
     make_cnc_request("pen.wash")
 
 def get_color(index):
-    # XXXX what to do for turtles?
     if index in range(0, 8):
         make_cnc_request("tool.color./" + str(index))
+
+        colors = ["black", "red", "orange", "yellow", "green", "blue", "purple", "brown"]
+        state['turtle'].color(colors[index])
+
     else:
         print("Color indexes must be between 0 and 7, but you gave me: " + index)
 
@@ -95,16 +98,37 @@ def get_position():
 
 ### Test program
 
+def draw_flower(x, y):
+    brush_up()
+    wash_brush()
+    get_color(5)
+
+    move_to(x, y)
+    for _ in range(15):
+        for _ in range(5):
+            turn_left(random.randrange(-90, 90))
+            move_forward(random.randrange(5, 10))
+            brush_down()
+            brush_up()
+            move_to(x, y)
+        y = y + 3
+
+    for _ in range(5):
+        turn_left(random.randrange(-90, 90))
+        move_forward(random.randrange(1, 6))
+        brush_down()
+        brush_up()
+        move_to(x, y)
+
 
 def flower_scene():
     initialize()
     wash_brush()
     get_color(4) # green
 
+    # stem 1
     move_to(-100, -145)
     point_in_direction(0)
-
-    # stem
     brush_down()
     for _ in range(25):
         move_forward(5)
@@ -113,29 +137,34 @@ def flower_scene():
         move_forward(5)
         turn_right(1)
 
-    stem_top_x, stem_top_y = get_position()
-
-    # flower
+    x1, y1 = get_position()
     brush_up()
-    wash_brush()
-    get_color(5)
 
-    move_to(stem_top_x, stem_top_y)
+    # stem 2
+    move_to(-100, -145)
+    point_in_direction(20)
+    brush_down()
+    for _ in range(25):
+        move_forward(5)
+        turn_left(1)
+
+    x2, y2 = get_position()
+    brush_up()
+
+    # stem 3
+    move_to(-30, -145)
+    point_in_direction(0)
+    brush_down()
     for _ in range(15):
-        for _ in range(5):
-            turn_left(random.randrange(-90, 90))
-            move_forward(random.randrange(5, 10))
-            brush_down()
-            brush_up()
-            move_to(stem_top_x, stem_top_y)
-        stem_top_y = stem_top_y + 3
+        move_forward(5)
+        turn_left(1)
 
-    for _ in range(5):
-        turn_left(random.randrange(-90, 90))
-        move_forward(random.randrange(1, 6))
-        brush_down()
-        brush_up()
-        move_to(stem_top_x, stem_top_y)
+    x3, y3 = get_position()
+
+    # flowers
+    draw_flower(x1, y1)
+    draw_flower(x2, y2)
+    draw_flower(x3, y3)
 
     wash_brush()
     park()
