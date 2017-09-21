@@ -1,7 +1,7 @@
 import requests
 import turtle
 
-### Private, implementation details
+### Implementation details
 
 # Global mutable state. Forgive me.
 state = {
@@ -9,11 +9,18 @@ state = {
 }
 
 def make_cnc_request(endpoint):
-    requests.get("http://localhost:4242/" + endpoint)
+    if state['connected_to_bot']:
+        requests.get("http://localhost:4242/" + endpoint)
 
-# Public
+### Public API
 
 def initialize():
+    try:
+        requests.get("http://localhost:4242/poll")
+        state['connected_to_bot'] = True
+    except requests.exceptions.ConnectionError:
+        state['connected_to_bot'] = False
+
     brush_up()
     park()
     # reset turtle
