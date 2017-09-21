@@ -1,3 +1,4 @@
+import random
 import requests
 import turtle
 
@@ -30,7 +31,7 @@ def initialize():
     state['window'] = turtle.Screen()
     state['window'].setup(width=WCB_WIDTH, height=WCB_HEIGHT)
     state['turtle'] = turtle.Turtle()
-    # TODO set turtle heading to scratch default angle
+    state['turtle'].width(5)
 
     brush_up()
     park()
@@ -58,6 +59,9 @@ def get_color(index):
 def brush_down():
     make_cnc_request("pen.down")
     state['turtle'].pendown()
+    # Wiggle the turtle one step so that it marks a dot on the turtle canvas.
+    state['turtle'].forward(1)
+    state['turtle'].backward(1)
 
 def brush_up():
     make_cnc_request("pen.up")
@@ -84,6 +88,9 @@ def turn_right(relative_angle):
     make_cnc_request("move.right./" + str(relative_angle))
     state['turtle'].right(relative_angle)
 
+def get_position():
+    return state['turtle'].position()
+
 # Test program
 
 
@@ -104,18 +111,29 @@ def flower_scene():
         move_forward(5)
         turn_right(1)
 
-
-
-
-
-
-     # TODO record current x, y position - get them from turtle?
-     # ugh shit
+    stem_top_x, stem_top_y = get_position()
 
     # flower
-    #brush_up()
-    #wash_brush()
-    #get_color(5)
+    brush_up()
+    wash_brush()
+    get_color(5)
+
+    move_to(stem_top_x, stem_top_y)
+    for _ in range(15):
+        for _ in range(5):
+            turn_left(random.randrange(-90, 90))
+            move_forward(random.randrange(5, 10))
+            brush_down()
+            brush_up()
+            move_to(stem_top_x, stem_top_y)
+        stem_top_y = stem_top_y + 3
+
+    for _ in range(5):
+        turn_left(random.randrange(-90, 90))
+        move_forward(random.randrange(1, 6))
+        brush_down()
+        brush_up()
+        move_to(stem_top_x, stem_top_y)
 
     wash_brush()
     park()
