@@ -78,7 +78,7 @@ def move_to(x, y):
 
 def point_in_direction(angle):
     make_cnc_request("move.absturn./" + str(angle))
-    state['turtle'].setheading(angle + 90)
+    state['turtle'].setheading(90 - angle)
 
 def move_forward(num_steps):
     make_cnc_request("move.forward./" + str(num_steps))
@@ -128,7 +128,7 @@ def flower_scene():
 
     # stem 1
     move_to(-100, -145)
-    point_in_direction(0)
+    point_in_direction(20)
     brush_down()
     for _ in range(25):
         move_forward(5)
@@ -142,7 +142,7 @@ def flower_scene():
 
     # stem 2
     move_to(-100, -145)
-    point_in_direction(20)
+    point_in_direction(0)
     brush_down()
     for _ in range(25):
         move_forward(5)
