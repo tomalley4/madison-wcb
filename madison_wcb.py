@@ -57,9 +57,11 @@ def get_color(index):
 
 def brush_down():
     make_cnc_request("pen.down")
+    state['turtle'].pendown()
 
 def brush_up():
     make_cnc_request("pen.up")
+    state['turtle'].penup()
 
 def move_to(x, y):
     make_cnc_request("coord/{0}/{1}".format(x, y))
@@ -68,7 +70,7 @@ def move_to(x, y):
 def point_in_direction(angle):
     make_cnc_request("move.absturn./" + str(angle))
     # XXXX will likely need to shift this to match scratch angles
-    state['turtle'].setheading(angle)
+    state['turtle'].setheading(angle + 90)
 
 def move_forward(num_steps):
     make_cnc_request("move.forward./" + str(num_steps))
@@ -91,7 +93,7 @@ def flower_scene():
     get_color(4) # green
 
     move_to(-100, -145)
-    point_in_direction(20)
+    point_in_direction(0)
 
     # stem
     brush_down()
