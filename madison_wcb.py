@@ -143,7 +143,7 @@ def get_x():
     """Returns the brush's current x-coordinate.
 
     Return value:
-        A number between -250 and 250, represnting the brush's current horizontal position.
+        A number between -250 and 250, representing the brush's current horizontal position.
     """
     return state['turtle'].xcor()
 
