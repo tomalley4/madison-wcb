@@ -12,8 +12,8 @@ state = {
 }
 
 # These measurements are in "steps", which are basically pixels.
-WCB_WIDTH = 620
-WCB_HEIGHT = 450
+WCB_WIDTH = 500
+WCB_HEIGHT = 360
 
 def make_cnc_request(endpoint):
     if state['connected_to_bot']:
@@ -23,6 +23,7 @@ def make_cnc_request(endpoint):
 ### Public API
 
 def initialize():
+    """Call this function at the beginning of your program."""
     try:
         requests.get('http://localhost:4242/poll')
         state['connected_to_bot'] = True
@@ -40,17 +41,25 @@ def initialize():
     park()
 
 def cleanup():
+    """Call this function at the end of your program."""
     brush_up()
     wash_brush()
     park()
 
 def park():
+    """Park the watercolorbot's brush in the top-left corner."""
     make_cnc_request("park")
 
 def wash_brush():
+    """Wash the brush in water."""
     make_cnc_request("pen.wash")
 
 def get_color(index):
+    """Dips the brush in paint.
+
+    Arguments:
+        index - an integer between 0 and 7, inclusive. Tells the bot which color you want.
+    """
     if index in range(0, 8):
         make_cnc_request("tool.color./" + str(index))
 
@@ -61,6 +70,7 @@ def get_color(index):
         print("Color indexes must be between 0 and 7, but you gave me: " + index)
 
 def brush_down():
+    """Puts the brush in its "down" position, so that it touches the paper."""
     make_cnc_request("pen.down")
     state['turtle'].pendown()
 
@@ -69,31 +79,81 @@ def brush_down():
     state['turtle'].backward(1)
 
 def brush_up():
+    """Puts the brush in its "up" position, so that it doesn't touch the paper."""
     make_cnc_request("pen.up")
     state['turtle'].penup()
 
 def move_to(x, y):
+    """Moves the brush to a particular position.
+
+    Arguments:
+        x - a number between -250 and 250.
+        y - a number between -180 and 180.
+    """
     make_cnc_request("coord/{0}/{1}".format(x, y))
     state['turtle'].goto(x, y)
 
 def point_in_direction(angle):
+    """Points the brush's "turtle" in the direction of the angle specified.
+
+    Arguments:
+        angle - a number between 0 and 360.
+    """
     make_cnc_request("move.absturn./" + str(angle))
     state['turtle'].setheading(90 - angle)
 
 def move_forward(num_steps):
+    """Moves the brush forward a few steps in the direction that its "turtle" is facing.
+
+    Arguments:
+        num_steps - a number like 20. A bigger number makes the brush move farther.
+    """
     make_cnc_request("move.forward./" + str(num_steps))
     state['turtle'].forward(num_steps)
 
 def turn_left(relative_angle):
+    """Turns the brush's "turtle" to the left.
+
+    Arguments:
+        relative_angle - a number like 10.
+            A bigger number makes the turtle turn farther to the left.
+    """
     make_cnc_request("move.left./" + str(relative_angle))
     state['turtle'].left(relative_angle)
 
 def turn_right(relative_angle):
+    """Turns the brush's "turtle" to the right.
+
+    Arguments:
+        relative_angle - a number like 10.
+            A bigger number makes the turtle turn farther to the right.
+    """
     make_cnc_request("move.right./" + str(relative_angle))
     state['turtle'].right(relative_angle)
 
 def get_position():
+    """Returns the brush's current position.
+
+    Return value:
+        A list like [-102, 50] representing the brush's current [x, y] position.
+    """
     return state['turtle'].position()
+
+def get_x():
+    """Returns the brush's current x-coordinate.
+
+    Return value:
+        A number between -250 and 250, represnting the brush's current horizontal position.
+    """
+    return state['turtle'].xcor()
+
+def get_y():
+    """Returns the brush's current y-coordinate.
+
+    Return value:
+        A number between -180 and 180, representing the brush's current vertical position.
+    """
+    return state['turtle'].ycor()
 
 
 ### Test program
@@ -137,7 +197,8 @@ def flower_scene():
         move_forward(5)
         turn_right(1)
 
-    x1, y1 = get_position()
+    x1 = get_x()
+    y1 = get_y()
     brush_up()
 
     # stem 2
@@ -148,7 +209,8 @@ def flower_scene():
         move_forward(5)
         turn_left(1)
 
-    x2, y2 = get_position()
+    x2 = get_x()
+    y2 = get_y()
     brush_up()
 
     # stem 3
@@ -159,7 +221,8 @@ def flower_scene():
         move_forward(5)
         turn_left(1)
 
-    x3, y3 = get_position()
+    x3 = get_x()
+    y3 = get_y()
 
     # flowers
     draw_flower(x1, y1)
